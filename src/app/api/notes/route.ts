@@ -33,3 +33,11 @@ export async function PUT(request: Request) {
     })
     return NextResponse.json(note);
 }
+
+export async function DELETE(request: Request) {
+    const body = await request.json();
+    await prisma.note.delete({
+        where: { id: body.id }
+    })
+    return NextResponse.json({ message: "Note deleted" });
+}

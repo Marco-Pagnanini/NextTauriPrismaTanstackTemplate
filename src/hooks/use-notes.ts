@@ -57,3 +57,22 @@ export function useUpdateNote() {
         },
     });
 }
+
+export function useDeleteNote(){
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: number) => {
+            const response = await fetch("/api/notes", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id }),
+            });
+            if (!response.ok) throw new Error("Failed to delete note");
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notes"] });
+        },
+    });
+}

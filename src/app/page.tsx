@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useNotes, useCreateNote, useUpdateNote } from "@/hooks/use-notes";
+import { useNotes, useCreateNote, useUpdateNote, useDeleteNote } from "@/hooks/use-notes";
 import { Button } from "@/components/ui/button";
 import NoteList from "./components/NoteList";
 import { Checkbox } from "@/components/ui/checkbox"
+import { Delete } from "lucide-react";
 
 
 export default function Home() {
     const { data: notes, isLoading, error } = useNotes();
     const createNote = useCreateNote();
     const updateNote = useUpdateNote();
+    const deleteNote = useDeleteNote();
     const [title, setTitle] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -32,6 +34,10 @@ export default function Home() {
         });
     }
 
+    const handleDelete = (noteId: number) => {
+        deleteNote.mutate(noteId);
+    }
+
     if (isLoading) return <div className="p-8">Loading...</div>;
     if (error)
         return <div className="p-8 text-destructive">Error: {error.message}</div>;
@@ -48,6 +54,7 @@ export default function Home() {
             <div className="space-y-3">
                 {notes?.map((note) => (
                     <div key={note.id} className="p-4 border rounded-lg">
+                        <Delete className="cursor-pointer text-destructive float-right" onClick={() => handleDelete(note.id)} />
                         <Checkbox
                             checked={note.isPinned}
                             onCheckedChange={(checked) => handlePinnedChange(note.id, !!checked)}
